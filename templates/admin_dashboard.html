@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block title %}SmartCare | Admin Dashboard{% endblock %}
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <h1 class="fw-bold mb-2">Administrator dashboard</h1>
+        <p class="mb-0 text-white-50">System overview and doctor management</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="stat-box h-100">
+                    <p class="text-muted mb-1">Patient count</p>
+                    <h3 class="fw-bold mb-0">{{ patient_count }}</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box h-100">
+                    <p class="text-muted mb-1">Doctor count</p>
+                    <h3 class="fw-bold mb-0">{{ doctor_count }}</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box h-100">
+                    <p class="text-muted mb-1">Pending</p>
+                    <h3 class="fw-bold mb-0">{{ counts.pending }}</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box h-100">
+                    <p class="text-muted mb-1">Completed</p>
+                    <h3 class="fw-bold mb-0">{{ counts.completed }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="dashboard-card mb-4">
+                    <h4 class="fw-bold mb-3">Add new doctor</h4>
+                    <form method="post" action="{{ url_for('add_doctor') }}" enctype="multipart/form-data">
+                        <div class="row g-3">
+                            <div class="col-md-6"><input type="text" class="form-control" name="full_name" placeholder="Full name" required></div>
+                            <div class="col-md-6"><input type="email" class="form-control" name="email" placeholder="Email" required></div>
+                            <div class="col-md-6"><input type="text" class="form-control" name="specialization" placeholder="Specialization" required></div>
+                            <div class="col-md-6"><input type="text" class="form-control" name="qualification" placeholder="Qualification"></div>
+                            <div class="col-md-4"><input type="number" class="form-control" name="experience_years" placeholder="Years" value="5"></div>
+                            <div class="col-md-4"><input type="number" class="form-control" name="consultation_fee" placeholder="Fee" value="1000"></div>
+                            <div class="col-md-4"><input type="text" class="form-control" name="clinic_name" placeholder="Clinic name" required></div>
+                            <div class="col-md-6">
+                                <label class="form-label small mb-2">Available days</label>
+                                <select name="available_days" class="form-select" multiple size="4">
+                                    <option>Mon</option>
+                                    <option>Tue</option>
+                                    <option>Wed</option>
+                                    <option>Thu</option>
+                                    <option>Fri</option>
+                                    <option>Sat</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small mb-2">Time slots</label>
+                                <select name="time_slots" class="form-select" multiple size="4">
+                                    <option>09:00 AM</option>
+                                    <option>11:00 AM</option>
+                                    <option>01:00 PM</option>
+                                    <option>03:00 PM</option>
+                                </select>
+                            </div>
+                            <div class="col-12"><textarea class="form-control" name="bio" rows="3" placeholder="Short professional biography"></textarea></div>
+                            <div class="col-12"><input type="file" class="form-control" name="photo" accept="image/*"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3 rounded-pill">Save doctor</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="dashboard-card">
+                    <h4 class="fw-bold mb-3">Doctor directory</h4>
+                    {% if doctors %}
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Specialty</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doctor in doctors %}
+                                <tr>
+                                    <td>{{ doctor.full_name }}</td>
+                                    <td>{{ doctor.specialization }}</td>
+                                    <td>
+                                        {% if doctor.is_active %}
+                                        <span class="badge bg-success-subtle text-success">Active</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary-subtle text-secondary">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <form method="post" action="{{ url_for('toggle_doctor', doctor_id=doctor.id) }}">
+                                            <button type="submit" class="btn btn-sm {% if doctor.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+                                                {% if doctor.is_active %}Deactivate{% else %}Activate{% endif %}
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">No doctors added yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

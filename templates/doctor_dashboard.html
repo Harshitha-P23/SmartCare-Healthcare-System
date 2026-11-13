@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}SmartCare | Doctor Dashboard{% endblock %}
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <h1 class="fw-bold mb-2">Doctor dashboard</h1>
+        <p class="mb-0 text-white-50">Welcome, {{ doctor.full_name }}</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="stat-box h-100">
+                    <p class="text-muted mb-1">Today</p>
+                    <h3 class="fw-bold mb-0">{{ appointments|length }}</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-box h-100">
+                    <p class="text-muted mb-1">Pending</p>
+                    <h3 class="fw-bold mb-0">{{ appointments|selectattr('status', 'equalto', 'Pending')|list|length }}</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-box h-100">
+                    <p class="text-muted mb-1">Approved</p>
+                    <h3 class="fw-bold mb-0">{{ appointments|selectattr('status', 'equalto', 'Approved')|list|length }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <h4 class="fw-bold mb-3">Appointment requests</h4>
+            {% if appointments %}
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appt in appointments %}
+                        <tr>
+                            <td>
+                                <div class="fw-semibold">{{ appt.patient_name }}</div>
+                                <small class="text-muted">{{ appt.phone }}</small>
+                            </td>
+                            <td>{{ appt.appointment_date }}</td>
+                            <td>{{ appt.time_slot }}</td>
+                            <td><span class="badge-status status-{{ appt.status|lower }}">{{ appt.status }}</span></td>
+                            <td>
+                                {% if appt.status != 'Completed' %}
+                                <div class="d-flex gap-2">
+                                    <form method="post" action="{{ url_for('update_doctor_appointment', appt_id=appt.id) }}">
+                                        <input type="hidden" name="action" value="approve">
+                                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                    </form>
+                                    <form method="post" action="{{ url_for('update_doctor_appointment', appt_id=appt.id) }}">
+                                        <input type="hidden" name="action" value="reject">
+                                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                    </form>
+                                    <form method="post" action="{{ url_for('update_doctor_appointment', appt_id=appt.id) }}">
+                                        <input type="hidden" name="action" value="complete">
+                                        <button type="submit" class="btn btn-primary btn-sm">Complete</button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                                <a href="{{ url_for('appointment_receipt', appt_id=appt.id) }}" class="btn btn-link p-0 mt-2">Receipt</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted mb-0">No appointments yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

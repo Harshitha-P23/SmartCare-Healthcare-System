@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}SmartCare | Reschedule Appointment{% endblock %}
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <h1 class="fw-bold mb-2">Reschedule appointment</h1>
+        <p class="mb-0 text-white-50">Update your visit with {{ doctor.full_name }}</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card p-4">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label class="form-label">New date</label>
+                            <input type="date" name="appointment_date" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New time</label>
+                            <select name="time_slot" class="form-select" required>
+                                <option value="">Select new slot</option>
+                                {% set slots = doctor.time_slots|replace('[','')|replace(']','')|replace("'", '')|replace('"','') %}
+                                {% set slot_list = slots.split(', ') %}
+                                {% for slot in slot_list %}
+                                <option value="{{ slot }}">{{ slot }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary rounded-pill w-100">Confirm reschedule</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

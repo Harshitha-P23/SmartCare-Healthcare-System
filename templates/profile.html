@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}SmartCare | Profile{% endblock %}
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <h1 class="fw-bold mb-2">My profile</h1>
+        <p class="mb-0 text-white-50">Update your personal details.</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card p-4">
+                    <form method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Full name</label>
+                                <input type="text" name="full_name" class="form-control" value="{{ user.full_name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" value="{{ user.email }}" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" name="phone" class="form-control" value="{{ user.phone or '' }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Date of birth</label>
+                                <input type="date" name="dob" class="form-control" value="{{ user.dob or '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Gender</label>
+                                <select name="gender" class="form-select">
+                                    <option value="">Select</option>
+                                    <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                    <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                    <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Address</label>
+                                <input type="text" name="address" class="form-control" value="{{ user.address or '' }}">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4 rounded-pill px-4">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

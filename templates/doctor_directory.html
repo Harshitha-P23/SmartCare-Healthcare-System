@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}SmartCare | Find Doctors{% endblock %}
+{% block content %}
+<section class="page-banner">
+    <div class="container">
+        <h1 class="fw-bold mb-2">Find your doctor</h1>
+        <p class="mb-0 text-white-50">Search by name, specialization, or clinic.</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="card p-4 mb-5">
+            <form method="get" class="row g-3">
+                <div class="col-md-5">
+                    <input type="text" name="q" class="form-control" placeholder="Search by name or clinic" value="{{ q }}">
+                </div>
+                <div class="col-md-4">
+                    <select name="specialization" class="form-select">
+                        <option value="">All specializations</option>
+                        {% for item in specializations %}
+                        <option value="{{ item }}" {% if specialization == item %}selected{% endif %}>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 d-grid">
+                    <button type="submit" class="btn btn-primary rounded-pill">Search</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="row g-4">
+            {% if doctors %}
+                {% for doctor in doctors %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 overflow-hidden">
+                        <img src="{{ doctor.photo_url }}" alt="{{ doctor.full_name }}" class="profile-image">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="fw-bold mb-1">{{ doctor.full_name }}</h5>
+                                <span class="badge bg-primary-subtle text-primary">{{ doctor.specialization }}</span>
+                            </div>
+                            <p class="text-muted small mb-2">{{ doctor.qualification }}</p>
+                            <p class="mb-2"><i class="fa-solid fa-hospital me-2 text-primary"></i>{{ doctor.clinic_name }}</p>
+                            <p class="mb-2"><i class="fa-solid fa-clock me-2 text-primary"></i>{{ doctor.available_days|replace('[','')|replace(']','')|replace("'", '')|replace('"','') }}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="fw-bold text-primary">₹{{ doctor.consultation_fee }}</span>
+                                <a href="{{ url_for('doctor_profile', doctor_id=doctor.id) }}" class="btn btn-outline-primary btn-sm rounded-pill">Book</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info">No doctors match your search. Try another specialization or keyword.</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
